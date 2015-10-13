@@ -44,6 +44,7 @@ function loadHandler() {
 function update()
 {
   //Create the animation loop
+  //Specifying the canvas causes the loop to pause when that canvas is not visible
   window.requestAnimationFrame(update, canvas);
   //Change the sprite's X position to make it move to the right across the canvas
   cat.x++;
