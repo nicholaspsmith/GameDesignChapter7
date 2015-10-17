@@ -56,7 +56,24 @@ var camera =
   x: 0,
   y: 0,
   width: canvas.width,
-  height: canvas.height
+  height: canvas.height,
+    //The camera's inner boundaries
+  rightInnerBoundary: function()
+  {
+    return this.x + (this.width * 0.75);
+  },
+  leftInnerBoundary: function()
+  {
+    return this.x + (this.width * 0.25);
+  },
+  topInnerBoundary: function()
+  {
+    return this.y + (this.height * 0.25);
+  },
+  bottomInnerBoundary: function()
+  {
+    return this.y + (this.height * 0.75);
+  }
 };
 
 //Center the camera over the gameWorld
@@ -175,26 +192,42 @@ function update()
   //Move the cat and keep it inside the gameWorld boundaries
   cat.x = Math.max(0, Math.min(cat.x + cat.vx, gameWorld.width - cat.width));
   cat.y = Math.max(0, Math.min(cat.y + cat.vy, gameWorld.height - cat.height));
-
-  //Move the camera
-  camera.x = Math.floor(cat.x + (cat.width / 2) - (camera.width / 2));
-  camera.y = Math.floor(cat.y + (cat.height / 2) - (camera.height / 2));
-
-  //Keep the camera inside the gameWorld boundaries
-
-  camera.x = Math.max(0, Math.min
-  (
-    Math.floor(cat.x + (cat.width / 2) - (camera.width / 2)),
-    gameWorld.width - camera.width
-  ));
-
-  camera.y = Math.max(0, Math.min
-  (
-    Math.floor(cat.y + (cat.height / 2) - (camera.height / 2)),
-    gameWorld.height - camera.height
-  ));
-
-  render();
+  //Scroll the camera
+  if(cat.x < camera.leftInnerBoundary())
+  {
+    camera.x = Math.floor(cat.x - (camera.width * 0.25));
+  }
+  if(cat.y < camera.topInnerBoundary())
+  {
+    camera.y = Math.floor(cat.y - (camera.height * 0.25));
+  }
+  if(cat.x + cat.width > camera.rightInnerBoundary())
+  {
+    camera.x = Math.floor(cat.x + cat.width - (camera.width * 0.75));
+  }
+  if(cat.y + cat.height > camera.bottomInnerBoundary())
+  {
+    camera.y = Math.floor(cat.y + cat.height - (camera.height * 0.75));
+  }
+  //The camera's world boundaries
+  if(camera.x < gameWorld.x)
+  {
+    camera.x = gameWorld.x;
+  }
+  if(camera.y < gameWorld.y)
+  {
+    camera.y = gameWorld.y;
+  }
+  if(camera.x + camera.width > gameWorld.x + gameWorld.width)
+  {
+    camera.x = gameWorld.x + gameWorld.width - camera.width;
+  }
+  if(camera.y + camera.height > gameWorld.height)
+  {
+    camera.y = gameWorld.height - camera.height;
+  }
+  //Render the game
+render();
 }
 
 function render(event)
